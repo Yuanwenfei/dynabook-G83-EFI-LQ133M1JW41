@@ -1,6 +1,6 @@
 # EFI — dynabook G83/HS · 内屏 LQ133M1JW41 定制版
 
-> 基于上游 [g83-11gen-hackintosh-tahoe-efi](https://github.com/xiananliu/g83-11gen-hackintosh-tahoe-efi) **1.3.2**（commit `112eca2`）+ 本机（内屏 JDI LQ133M1JW41 13.3" FHD eDP）实测修复的完整 EFI。
+> 基于上游 [g83-11gen-hackintosh-tahoe-efi](https://github.com/xiananliu/g83-11gen-hackintosh-tahoe-efi) **1.3.2**（commit `112eca2`）+ 本机（内屏 Sharp LQ133M1JW41 13.3" FHD eDP）实测修复的完整 EFI。
 > 2026-11-11 全项验收通过（内屏点亮 1080p 硬件加速 / 声音 / 麦克风 / 合盖不睡死）。
 
 ## 1. 机型与屏幕
@@ -10,7 +10,7 @@
 | 机器 | Toshiba dynabook G83/HS（Tiger Lake U） |
 | CPU | Intel Core i5-1135G7 |
 | 核显 | Iris Xe 80EU（`0x9A49`），WhateverXe + Lilu |
-| **内屏** | **JDI LQ133M1JW41（13.3" 1920×1080 eDP）** |
+| **内屏** | **Sharp LQ133M1JW41（13.3" 1920×1080 eDP）** |
 | 声卡 | Realtek ALC257（`alcid=11`） |
 | 系统 | macOS Tahoe 26.7.2（25G332） |
 | SMBIOS | MacBookPro16,2（**三码为空**，安装前需自行生成，见第 4 节） |

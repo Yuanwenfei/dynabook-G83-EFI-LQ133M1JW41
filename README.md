@@ -1,6 +1,6 @@
-# dynabook G83/HS · macOS Tahoe EFI（内屏 JDI LQ133M1JW41）
+# dynabook G83/HS · macOS Tahoe EFI（内屏 Sharp LQ133M1JW41）
 
-东芝 dynabook G83/HS（Tiger Lake，i5-1135G7 / Iris Xe 80EU）的 OpenCore 黑苹果 EFI，针对 **JDI LQ133M1JW41**（13.3" 1920×1080 eDP）面板专门适配并实测验收。
+东芝 dynabook G83/HS（Tiger Lake，i5-1135G7 / Iris Xe 80EU）的 OpenCore 黑苹果 EFI，针对 **Sharp LQ133M1JW41**（13.3" 1920×1080 eDP）面板专门适配并实测验收。
 
 基于上游 [g83-11gen-hackintosh-tahoe-efi](https://github.com/xiananliu/g83-11gen-hackintosh-tahoe-efi) **1.3.2**（OpenCore 1.0.8，WhateverXe + Lilu 注入 Iris Xe）。
 
