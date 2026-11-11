@@ -1,0 +1,11 @@
+# ===== 只跟踪 dynabook-G83-EFI-LQ133M1JW41（其余全部忽略）=====
+/*
+!/dynabook-G83-EFI-LQ133M1JW41/
+!.gitignore
+!.gitattributes
+
+# ===== 原有规则（保留）=====
+.DS_Store
+*.txt
+!README.md
+EFI/OC/*.bak
