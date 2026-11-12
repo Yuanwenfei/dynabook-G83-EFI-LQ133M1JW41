@@ -146,6 +146,15 @@ i915 日志还给出带宽口径：`required 415500 / available 432000`（2 lane
 
 **落地方式（Tahoe 特殊坑）**：macOS 26 的 `kmutil create/install` 重建 AuxKC 需要 KDK（build 25G332 无现成 KDK，`--update-boot` 已废弃）→ 改为**直接对已生成的 `AuxiliaryKernelExtensions.kc` 内嵌字节做同偏移 patch**（文件偏移 `0x18fd77`），重启未被签名校验阻止。
 
+**跨版本定位：字节模式签名（推荐，勿硬编码偏移）**——补丁点的可靠特征是：
+
+```
+41 c7 00 01 00 00 00        mov dword ptr [r8], 1
+b3 01 89 d8                 mov bl, 1 ; mov eax, ebx      ← 后随签名，用于排除同字节串的误匹配
+```
+
+在驱动本体与 AuxKC 中各搜一次该模式（`41 c7 00 01 00 00 00` 且后随 `b3 01 89 d8`），把其中的 `01` 改 `02`；已打过（02）则跳过。幂等脚本应：定位 → 备份 → 补丁 → 复验。
+
 | 产物 | sha256 前 8 位 |
 |---|---|
 | patched 驱动 `/L/E/AppleIntelTGLGraphicsFramebuffer` | `4f1e4b3b` |
@@ -190,7 +199,24 @@ system_profiler：1920×1080@60、30-Bit ARGB2101010、Internal、Online、Main 
 2. "1 lane 带宽不足"曾被认为是根因，iter-1b 用 HBR2 实测排除（带宽够也失败）；
 3. `-wex-edp-ssc-107-off` 差点被当成首选实验——日志显示驱动本来就写 `0x107=0`。
 
-## 12. 遗留与后续
+## 12. Sequoia 15.8.3 独立验证（2026-11-12，群友实测）
+
+另一位 G83/HS 群友在**同一块面板（SHP14B8，`0x4D10:0x14B8`）**上，用本 EFI 引导 **macOS Sequoia 15.8.3**，独立复现并验证了本方案：
+
+| 验证点 | 结果 |
+|---|---|
+| 一字节补丁（同偏移 `0x1fd77` / AuxKC `0x18fd77`） | ✅ Sequoia 下同样有效（两版 framebuffer 哈希不同，但补丁点布局一致） |
+| 内屏 | ✅ 点亮 + Metal 2（默认 1680×944 缩放档，可切 1920×1080/1600×900/1440×810） |
+| Phase 1 训练失败 | 0 次 |
+| 补丁独立性 | 69 参数 WEX + 12 项 boot-args → 黑屏；87 参数 + 16 项 → 黑屏；**任意组合 + 一字节补丁 → 点亮**。补丁独立于 WEX 版本与 boot-args，是唯一决定性因素 |
+
+这使根因结论（`computeLaneCount` fallback 1 lane）从"Tahoe 单版本事实"升级为"**跨 macOS 大版本的驱动行为**"，§8 的字节模式签名也被证实可跨版本定位，无需重新逆向。
+
+群友环境的差异记录：Sequoia 下无 HiDPI（改密封卷 Overrides 需关 authenticated-root，未做）；HDMI 外接在其机器上无输出（本机为花屏，表现不同）；睡眠同样必须禁用。
+
+*群友完整踩坑记录见仓库 `docs/G83黑苹果-踩坑总结.md`（含 SSH 破黑屏迭代法、`dispmode` 分辨率工具、系统更新后 repatch 流程）。*
+
+## 13. 遗留与后续
 
 - **对上游最有价值的请求**：把已存在的 `tglAdoptingLease()` / `adoptBootPath()` 暴露为 boot-arg（等价于社区issue 里的 `-wex-edp-keep`）——固件留下的 `0x101=0x82` 本身就是能用的配置，"沿用"比"重训"便宜得多；
 - 图形栈偶发死机（WindowServer watchdog，跨上游版本存在，11-09 原版参数时期即有 panic）是另一层独立问题，候选缓解 `-wex-tgl-hold-render-wake`；
